@@ -1,0 +1,25 @@
+services:
+  reverse_proxy:
+    image: nginx:alpine
+    container_name: fukayalab_reverse_proxy
+    ports:
+      - "80:80"      # ホストのHTTPポート80番をコンテナの80番にマッピング
+      # - "443:443"  # 将来HTTPS化する場合にコメントを外す
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro  # Nginxのサイト設定ファイルを読み取り専用でマウント
+      # - ./nginx/ssl:/etc/nginx/ssl:ro      # 将来HTTPS化する場合にSSL証明書をマウント
+      - ./logs/nginx:/var/log/nginx        # Nginxのログをホストに保存したい場合 (任意)
+    networks:
+      - shared_services_network # バックエンドサービスと通信するための共有ネットワーク
+    restart: unless-stopped
+
+networks:
+  oruca_network:
+    name: oruca_network 
+    driver: bridge
+  appflowy_network:
+    name: appflowy_network 
+    driver: bridge
+  gitlab_network:
+    name: gitlab_network 
+    driver: bridge
